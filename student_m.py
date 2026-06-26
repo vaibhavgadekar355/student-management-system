@@ -20,6 +20,10 @@ def Add_student():
     if name_var.get()=="" or roll_var.get()=="" or course_var.get()=="":
         messagebox.showerror("Error","All Fields Must Be Filled")
         return
+    if not roll_var.get().isdigit():
+        messagebox.showerror("Error","Roll number must be an integer")
+        return
+
     conn= sqlite3.connect("students_database")
     cursor=conn.cursor()
 
@@ -52,8 +56,29 @@ def show_students():
 
     conn.close()
 
+def update_student():
+    try:
+        selected = student_list.get(student_list.curselection())
+        student_roll = selected[1]
+
+        conn= sqlite3.connect("students_database")
+        cursor= conn.cursor()
+
+        cursor.execute("""UPDATE student Set name=?, roll=?, course=? WHERE roll=?""",( name_var.get(), roll_var.get(),course_var.get(),student_roll))
+
+        conn.commit()
+        conn.close()
+
+        messagebox.showinfo("success","your data is updated") 
 
 
+        clear_fields()
+        show_students()
+
+    except Exception as e:
+        messagebox.showerror("Error",str(e))
+
+    
 
 def clear_fields():
     name_var.set("")
@@ -61,17 +86,18 @@ def clear_fields():
     course_var.set("")
 
 
-def select_students():
+def select_students(event):
     try:
         selected =student_list.get(student_list.curselection())
 
-        name_var.set(selected[1])
-        roll_var.set(selected[2])
-        course_var.set(selected[3])
+        name_var.set(selected[0])
+        roll_var.set(selected[1])
+        course_var.set(selected[2])
 
-    except:
-        pass
+    except Exception as e:
+        messagebox.showerror("Error",str(e) )
 
+ 
 root= Tk()
 root.title("student management table")
 root.geometry("700x600")
@@ -102,12 +128,12 @@ Frame1.pack()
 
 Button(Frame1,text="Add student",command=Add_student).grid(row=0,column=0)
 Button(Frame1,text="Clear Fields",command=clear_fields).grid(row=0,column=1)
-
+Button(Frame1,text="update Data",command=update_student).grid(row=0,column=2)
 
 student_list= Listbox(root,width=90,height=30)
 student_list.pack()
 
-student_list.bind("<<Listboxselect>>", select_students)
+student_list.bind("<<ListboxSelect>>", select_students)
 
 show_students()
 
