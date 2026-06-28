@@ -78,8 +78,29 @@ def update_student():
     except Exception as e:
         messagebox.showerror("Error",str(e))
 
-    
+def delete_student():
+    try:
+        selected = student_list.get(student_list.curselection())
+        student_roll=selected[1]
 
+        conn = sqlite3.connect("students_database")
+        cursor= conn.cursor()
+
+        cursor.execute("DELETE FROM student WHERE roll=?",(student_roll,))
+
+        conn.commit()
+        conn.close()
+
+        messagebox.showinfo("success","student data deleted successfully")
+        show_students()
+
+    except:
+        messagebox.showerror("error","select student first")
+
+
+
+
+        
 def clear_fields():
     name_var.set("")
     roll_var.set("")
@@ -128,7 +149,8 @@ Frame1.pack()
 
 Button(Frame1,text="Add student",command=Add_student).grid(row=0,column=0)
 Button(Frame1,text="Clear Fields",command=clear_fields).grid(row=0,column=1)
-Button(Frame1,text="update Data",command=update_student).grid(row=0,column=2)
+Button(Frame1,text="Update Data",command=update_student).grid(row=0,column=2)
+Button(Frame1,text="Delete student",command=delete_student).grid(row=0,column=3)
 
 student_list= Listbox(root,width=90,height=30)
 student_list.pack()
