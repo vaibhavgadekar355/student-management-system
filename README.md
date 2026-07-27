@@ -8,4 +8,4 @@ This project was created to practice:
 - Database connectivity
 - Problem-solving
 - Git and GitHub workflow
-#Student Management System
+
